@@ -1,6 +1,8 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import First from "./pages/First";
 import Home from "./pages/Home";
+import Login from "./pages/Login";
+import ProtectedRoute from "./components/ProtectedRoute";
 import AddProduct from "./admin/AddProduct";
 
 const routes = createBrowserRouter([
@@ -13,8 +15,17 @@ const routes = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/product/add",
-        element: <AddProduct />,
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        element: <ProtectedRoute role="admin" />,
+        children: [
+          {
+            path: "/admin/product/add",
+            element: <AddProduct />,
+          },
+        ],
       },
     ],
   },

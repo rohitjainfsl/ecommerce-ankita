@@ -9,22 +9,43 @@ function AddProduct() {
     actualPrice: "",
     discountedPrice: "",
     category: "",
+    image: "",
   });
 
+  const [success, setSuccess] = useState(false);
+
   function handleChange(e) {
-    const { name, value } = e.target;
-    setData({ ...data, [name]: value });
+    if (e.target.name === "image")
+      setData({ ...data, image: e.target.files[0] });
+    else {
+      const { name, value } = e.target;
+      setData({ ...data, [name]: value });
+    }
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const response = await instance.post("/product/add", data);
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      const response = await instance.post("/product/add", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      console.log(response);
+      if (response.status === 201 && response.statusText === "Created")
+        setSuccess(true);
     } catch (error) {
       console.log(error.message);
     }
   }
-  return (
+
+  return success ? (
+    <h2>PRODUCT ADDED</h2>
+  ) : (
     <form action="" onSubmit={handleSubmit}>
       <div className="form-group">
         <label htmlFor="name">Name</label>
@@ -81,6 +102,16 @@ function AddProduct() {
         <textarea name="description" id="description" onChange={handleChange}>
           {data.description}
         </textarea>
+      </div>
+      <div className="form-group">
+        <label htmlFor="image">Product Image</label>
+        <input
+          type="file"
+          name="image"
+          id="image"
+          accept="image/*"
+          onChange={handleChange}
+        />
       </div>
       <button type="submit">Add Product</button>
     </form>

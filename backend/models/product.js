@@ -22,6 +22,9 @@ const productSchema = new Schema({
   discountedPrice: {
     type: Number,
   },
+  image: {
+    type: String,
+  },
 });
 
 const Product = model("product", productSchema);
